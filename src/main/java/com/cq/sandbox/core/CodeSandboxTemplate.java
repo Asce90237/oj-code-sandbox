@@ -19,7 +19,7 @@ import java.util.UUID;
  * 代码沙箱模板
  * 注意每个实现类必须自定义代码存放路径，参考{@link JavaNativeCodeSandbox}
  *
- * @author 程崎
+ * @author Asce
  * @since 2023/09/01
  */
 @Slf4j
