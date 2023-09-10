@@ -25,11 +25,11 @@ import java.util.UUID;
 @Slf4j
 public abstract class CodeSandboxTemplate implements CodeSandbox {
 
-    String prefix;
+    String prefix; // java
 
-    String globalCodeDirPath;
+    String globalCodeDirPath; // tempCode
 
-    String globalCodeFileName;
+    String globalCodeFileName; // Main.java
 
     /**
      * 超时时间，超过10秒则结束
@@ -90,6 +90,7 @@ public abstract class CodeSandboxTemplate implements CodeSandbox {
         List<ExecuteMessage> executeMessageList = new LinkedList<>();
         for (String input : inputList) {
             Process runProcess;
+            // 类似开启守护进程，若超时则销毁进程
             Thread computeTimeThread;
             try {
                 runProcess = Runtime.getRuntime().exec(runCmd);
@@ -107,6 +108,7 @@ public abstract class CodeSandboxTemplate implements CodeSandbox {
                 computeTimeThread.start();
                 StopWatch stopWatch = new StopWatch();
                 stopWatch.start();
+                // 给终端喂输入用例，得到输出结果
                 ExecuteMessage executeMessage = ProcessUtil.handleProcessInteraction(runProcess, input, "运行");
                 stopWatch.stop();
                 computeTimeThread.stop();
@@ -127,15 +129,20 @@ public abstract class CodeSandboxTemplate implements CodeSandbox {
         String code = executeCodeRequest.getCode();
         // 保存代码
         File userCodeFile = saveCodeToFile(code);
+        // 获取代码文件全路径 xx.java
         String userCodePath = userCodeFile.getAbsolutePath();
+        // 获取代码文件的父级文件全路径 UUID
         String userCodeParentPath = userCodeFile.getParentFile().getAbsolutePath();
+        // 获取命令行代码（包括编译代码和运行代码）
         CodeSandboxCmd cmdFromLanguage = getCmd(userCodeParentPath, userCodePath);
         String compileCmd = cmdFromLanguage.getCompileCmd();
         String runCmd = cmdFromLanguage.getRunCmd();
         // 编译代码
         try {
             ExecuteMessage executeMessage = compileCode(compileCmd);
+            // 若编译的命令行执行退出码不为0，则为异常退出
             if (executeMessage.getExitCode() != 0) {
+                // 删除临时用户代码文件夹
                 FileUtil.del(userCodeParentPath);
                 return ExecuteCodeResponse
                         .builder()
@@ -160,9 +167,11 @@ public abstract class CodeSandboxTemplate implements CodeSandbox {
             long maxTime = 0;
 
             for (ExecuteMessage executeMessage : executeMessageList) {
+                // 若退出码为正常退出，则添加正常输出结果
                 if (ObjectUtil.equal(0, executeMessage.getExitCode())) {
                     outputList.add(executeMessage.getMessage());
                 } else {
+                    // 若为异常退出码，则添加异常信息，并直接结束，因为已经不可能正确了
                     executeCodeResponse.setMessage(executeMessage.getErrorMessage());
                     executeCodeResponse.setStatus(3);
                     break;

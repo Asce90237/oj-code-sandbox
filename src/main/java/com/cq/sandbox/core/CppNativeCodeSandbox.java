@@ -30,7 +30,7 @@ public class CppNativeCodeSandbox extends CodeSandboxTemplate {
     public CodeSandboxCmd getCmd(String userCodeParentPath, String userCodePath) {
         return CodeSandboxCmd
                 .builder()
-                .compileCmd(String.format("D:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\\g++ -finput-charset=UTF-8 -fexec-charset=UTF-8 %s -o %s", userCodePath, userCodePath.substring(0, userCodePath.length() - 4)))
+                .compileCmd(String.format("g++ -finput-charset=UTF-8 -fexec-charset=UTF-8 %s -o %s", userCodePath, userCodePath.substring(0, userCodePath.length() - 4)))
                 .runCmd(userCodeParentPath + File.separator + "main")
                 .build();
     }

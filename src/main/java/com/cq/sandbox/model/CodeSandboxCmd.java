@@ -10,6 +10,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CodeSandboxCmd {
+
+    /**
+     * 编译
+     */
     private String compileCmd;
+
+    /**
+     * 运行
+     */
     private String runCmd;
 }

@@ -19,7 +19,7 @@ import java.io.OutputStream;
 public class ProcessUtil {
 
     /**
-     * 运行进行
+     * 执行进程获取终端信息
      *
      * @param runProcess    运行进程
      * @param operationName 操作名称
@@ -30,11 +30,13 @@ public class ProcessUtil {
         StringBuilder output = new StringBuilder();
         StringBuilder errorOutput = new StringBuilder();
         try {
+            // 等待执行，获取退出码 0 - 正常退出
             exitCode = runProcess.waitFor();
             if (exitCode == 0) {
                 log.info(operationName + "成功");
             } else {
                 log.error(operationName + "失败，错误码为: {}", exitCode);
+                // 成块分批逐行读取终端的输出
                 BufferedReader errorBufferedReader = new BufferedReader(new InputStreamReader(runProcess.getErrorStream()));
                 String errorRunOutputLine;
                 while ((errorRunOutputLine = errorBufferedReader.readLine()) != null) {
@@ -61,12 +63,23 @@ public class ProcessUtil {
     }
 
 
+    /**
+     * 给进程喂输入用例
+     *
+     * @param runProcess    运行进程
+     * @param input         输入数据
+     * @param operationName 操作名称
+     * @return
+     */
     public static ExecuteMessage handleProcessInteraction(Process runProcess, String input, String operationName) {
         OutputStream outputStream = runProcess.getOutputStream();
         try {
+            // 给终端喂输入用例
             outputStream.write((input + "\n").getBytes());
+            // flush相当于按回车
             outputStream.flush();
             outputStream.close();
+            // 返回终端输出结果
             return handleProcessMessage(runProcess, operationName);
         } catch (IOException e) {
             throw new RuntimeException(e);
