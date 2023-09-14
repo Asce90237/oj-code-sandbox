@@ -2,6 +2,8 @@ package com.cq.sandbox.core;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.dfa.FoundWord;
+import cn.hutool.dfa.WordTree;
 import com.cq.sandbox.model.*;
 import com.cq.sandbox.utils.ProcessUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +12,7 @@ import org.springframework.util.StopWatch;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 代码沙箱模板
@@ -35,6 +34,17 @@ public abstract class CodeSandboxTemplate implements CodeSandbox {
      * 超时时间，超过10秒则结束
      */
     public static final Long DEFAULT_TIME_OUT = 10000L;
+
+    public static final WordTree WORD_TREE;
+
+    public static final List<String> BLACK_LIST = Arrays.asList(
+            "Files", "exec", "getProperty", "Runtime"
+    );
+
+    static {
+        WORD_TREE = new WordTree();
+        WORD_TREE.addWords(BLACK_LIST);
+    }
 
 
     /**
@@ -127,6 +137,16 @@ public abstract class CodeSandboxTemplate implements CodeSandbox {
     public final ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
         List<String> inputList = executeCodeRequest.getInputList();
         String code = executeCodeRequest.getCode();
+        // 判断是否有恶意代码
+        FoundWord foundWord = WORD_TREE.matchWord(code);
+        if (foundWord != null) {
+            log.error("包含恶意代码!!!");
+            return ExecuteCodeResponse
+                    .builder()
+                    .status(2)
+                    .message("编译错误")
+                    .build();
+        }
         // 保存代码
         File userCodeFile = saveCodeToFile(code);
         // 获取代码文件全路径 xx.java
