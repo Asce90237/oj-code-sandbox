@@ -31,9 +31,14 @@ public class JavaNativeCodeSandbox extends CodeSandboxTemplate {
     @Override
     public CodeSandboxCmd getCmd(String userCodeParentPath, String userCodePath) {
         return CodeSandboxCmd
-                .builder() //todo 上线需修改jdk路径 /usr/local/jdk1.8.0_341/bin/
-                .compileCmd(String.format("/usr/local/jdk1.8.0_341/bin/javac -encoding utf-8 %s", userCodePath))
-                .runCmd(String.format("/usr/local/jdk1.8.0_341/bin/java -Xmx256m -Dfile.encoding=UTF-8 -cp %s Main", userCodeParentPath))
+                .builder() //todo 上线需修改jdk路径 /usr/local/jdk1.8.0_341/bin/javac
+                .compileCmd(String.format("javac -encoding utf-8 %s", userCodePath))
+                .runCmd(String.format("java -Xmx256m -Dfile.encoding=UTF-8 -cp %s;%s -Djava.security.manager=MySecurityManager Main",
+                        userCodeParentPath,
+                        "D:\\code\\cqoj-code-sandbox\\src\\main\\resources\\security"
+                        ))
                 .build();
+        // java -Xmx256m -Dfile.encoding=UTF-8 -cp %s;%s -Djava.security.manager=MySecurityManager Main
+        // java -Xmx256m -Dfile.encoding=UTF-8 -cp %s Main
     }
 }

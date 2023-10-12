@@ -19,11 +19,11 @@ class JavaNativeCodeSandboxTest {
     void executeCode() {
         CodeSandboxTemplate codeSandbox = new JavaNativeCodeSandbox();
 //        CodeSandboxTemplate codeSandbox = new CppNativeCodeSandbox();
-        String code = ResourceUtil.readStr("testcode/SumPlus.java", StandardCharsets.UTF_8);
+        String code = ResourceUtil.readStr("testcode/Main.java", StandardCharsets.UTF_8);
         QuestionSubmitLanguageEnum languageType = QuestionSubmitLanguageEnum.getEnumByValue("java");
         ExecuteCodeRequest executeCodeRequest = ExecuteCodeRequest
                 .builder()
-                .inputList(Arrays.asList("the sky is blue", "  hello world  ", "a good   example"))
+                .inputList(Arrays.asList("1 2", "3 5"))
                 .code(code)
                 .language(languageType)
                 .build();

@@ -24,11 +24,11 @@ import java.util.*;
 @Slf4j
 public abstract class CodeSandboxTemplate implements CodeSandbox {
 
-    String prefix; // java
+    String prefix; // /java
 
-    String globalCodeDirPath; // tempCode
+    String globalCodeDirPath; // /tempCode
 
-    String globalCodeFileName; // Main.java
+    String globalCodeFileName; // /Main.java
 
     /**
      * 超时时间，超过10秒则结束
