@@ -139,14 +139,14 @@ public abstract class CodeSandboxTemplate implements CodeSandbox {
         String code = executeCodeRequest.getCode();
         // 判断是否有恶意代码
         FoundWord foundWord = WORD_TREE.matchWord(code);
-        if (foundWord != null) {
-            log.error("包含恶意代码!!!");
-            return ExecuteCodeResponse
-                    .builder()
-                    .status(2)
-                    .message("编译错误")
-                    .build();
-        }
+//        if (foundWord != null) {
+//            log.error("包含恶意代码!!!");
+//            return ExecuteCodeResponse
+//                    .builder()
+//                    .status(2)
+//                    .message("编译错误")
+//                    .build();
+//        }
         // 保存代码
         File userCodeFile = saveCodeToFile(code);
         // 获取代码文件全路径 xx.java

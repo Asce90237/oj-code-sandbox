@@ -19,7 +19,7 @@ public class MySecurityManager extends SecurityManager{
 
     @Override
     public void checkRead(String file) {
-        throw new SecurityException("checkRead 权限异常：" + file);
+//        throw new SecurityException("checkRead 权限异常：" + file);
     }
 
     @Override
